@@ -9,14 +9,20 @@
 class Player : public Entity
 {
 public:
+    bool flip;
+    bool jumping;
     Player(const char* filename, int numFrames, float initialX = 0.0f, float initialY = 0.0f, float fps = 20.0f, bool isAnimated = true)
+	    :flip(false), jumping(false) 
     {
         AddComponent(new Transform2DComponent());
         GetComponent<Transform2DComponent>()->position.x = initialX;
         GetComponent<Transform2DComponent>()->position.y = initialY;
 
         AddComponent(new SpriteComponent(filename, numFrames, fps, isAnimated));
-        AddComponent(new ColliderComponent(Bounds(Tmpl8::vec2(0, 0), Tmpl8::vec2(58, 58))));
+
+        std::vector<Bounds> playerBounds = { Bounds(Tmpl8::vec2(11, 10), Tmpl8::vec2(45, 57)) };
+        AddComponent(new ColliderComponent(playerBounds));
+
         AddComponent(new PhysicsComponent());
     }
 };

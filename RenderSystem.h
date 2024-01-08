@@ -14,20 +14,30 @@ public:
 
         if (transform && sprite)
         {
-            sprite->Draw(&screen, transform->position.x, transform->position.y, 1.0f);
+            Player* player = dynamic_cast<Player*>(&entity);
+            bool flip = player ? player->flip : false;
+            sprite->Draw(&screen, transform->position.x, transform->position.y, 1.0f, flip);
         }
 
         if (collider)
         {
-            collider->bounds.min += transform->position;
-            collider->bounds.max += transform->position;
+            for (auto& bound : collider->bounds)
+            {
+                Bounds offsetBounds = bound;
+                offsetBounds.min += transform->position;
+                offsetBounds.max += transform->position;
 #ifdef _DEBUG
-            collider->Draw(&screen, 0xff0000);  // Draw the collider in red
+                if (collider)
+                {
+                    collider->Draw(&screen, 0xff0000, transform->position);  // Draw the collider in red
+                }
+                // Draw the collider in red
 #endif
-            collider->bounds.min -= transform->position;
-            collider->bounds.max -= transform->position;
-
+                offsetBounds.min -= transform->position;
+                offsetBounds.max -= transform->position;
+            }
         }
     }
 };
+
 

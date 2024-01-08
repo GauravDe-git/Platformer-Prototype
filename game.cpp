@@ -7,7 +7,7 @@ namespace Tmpl8
 {
 	void Game::Init()
 	{
-		player = new Player("assets/player_idle.png",26,100,0);
+		player = new Player("assets/player_idle.png",26,100,100);
 		entities.push_back(player);
 
 		level = new Level("assets/map.png", "assets/foreground.png");
@@ -49,20 +49,47 @@ namespace Tmpl8
 				transform->position.y += physics->velocity.y * deltaTime;
 				// Check for collision with the level
 				ColliderComponent* levelCollider = level->GetComponent<ColliderComponent>();
-				if (collider && levelCollider && collider->bounds.At(transform->position).Collides(levelCollider->bounds))
+				if (collider && levelCollider)
 				{
-					// Collision detected, revert the y position and stop the y velocity
-					transform->position.y = oldPosition.y;
-					physics->velocity.y = 0.0f;
-				}
+					for (auto& bound : collider->bounds)
+					{
+						Bounds offsetBounds = bound;
+						offsetBounds.min += transform->position;
+						offsetBounds.max += transform->position;
 
+						for (auto& levelBound : levelCollider->bounds)
+						{
+							if (Bounds::Collides(offsetBounds, levelBound))
+							{
+								// Collision detected, revert the y position and stop the y velocity
+								transform->position.y = oldPosition.y;
+								physics->velocity.y = 0.0f;
+								player->jumping = false;  // Set jumping to false when a collision with the ground is detected
+								break;
+							}
+						}
+					}
+				}
 				// Add horizontal movement
 				transform->position.x += physics->velocity.x * deltaTime;
 				// Check for collision with the level
-				if (collider && levelCollider && collider->bounds.At(transform->position).Collides(levelCollider->bounds))
+				if (collider && levelCollider)
 				{
-					// Collision detected, revert the x position
-					transform->position.x = oldPosition.x;
+					for (auto& bound : collider->bounds)
+					{
+						Bounds offsetBounds = bound;
+						offsetBounds.min += transform->position;
+						offsetBounds.max += transform->position;
+						for (auto& levelBound : levelCollider->bounds)
+						{
+							if (Bounds::Collides(offsetBounds, levelBound))
+							{
+								// Collision detected, revert the x position
+								transform->position.x = oldPosition.x;
+								break;
+							}
+						}
+					}
 				}
 			}
 			renderSystem.Update(*entity, *screen);
@@ -97,10 +124,18 @@ namespace Tmpl8
 		{
 		case SDL_SCANCODE_LEFT:  // Move left
 			physics->velocity.x = -100.0f;
+			player->flip = true;
 			break;
 		case SDL_SCANCODE_RIGHT:  // Move right
 			physics->velocity.x = 100.0f;
+			player->flip = false;
 			break;
+		case SDL_SCANCODE_SPACE:  // Jump
+			if (!player->jumping)  // Only allow a jump if the player is not already jumping
+			{
+				physics->velocity.y = -300.0f;  // Apply an upward force
+				player->jumping = true;  // Set jumping to true
+			}
 		default:
 			break;
 		}
