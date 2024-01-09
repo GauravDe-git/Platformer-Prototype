@@ -237,6 +237,7 @@
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bomb.h" />
     <ClInclude Include="Bounds.h" />
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="Component.h" />
@@ -245,6 +246,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="PhysicsComponent.h" />
+    <ClInclude Include="Platform.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="SpriteAnim.h" />

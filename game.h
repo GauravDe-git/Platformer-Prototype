@@ -5,6 +5,8 @@
 
 #include <SDL_scancode.h>
 
+#include "Platform.h"
+
 namespace Tmpl8 {
 
 class Surface;
@@ -14,6 +16,7 @@ public:
 	void SetTarget( Surface* surface ) { screen = surface; }
 	void Init();
 	void Shutdown();
+	void HandleCollision(Entity* entity, const vec2& oldPosition, vec2& newPosition, float& velocity, bool isXAxis);
 	void Tick( float deltaTime );
 	void MouseUp( int button ) { /* implement if you want to detect mouse button presses */ }
 	void MouseDown( int button ) { /* implement if you want to detect mouse button presses */ }
@@ -27,6 +30,7 @@ private:
 	std::vector<Entity*> entities;
 
 	Level* level;
+	Platform* platform;
 };
 
 }; // namespace Tmpl8

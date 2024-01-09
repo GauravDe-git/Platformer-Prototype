@@ -12,11 +12,70 @@ namespace Tmpl8
 
 		level = new Level("assets/map.png", "assets/foreground.png");
 		entities.push_back(level);
+
+        platform = new Platform("assets/platform1.png", 250, 350);
+		entities.push_back(platform);
 	}
 
 	void Game::Shutdown()
 	{
 	}
+
+    void Game::HandleCollision(Entity* entity, const vec2& oldPosition, vec2& newPosition, float& velocity, bool isXAxis)
+    {
+        if (const ColliderComponent* entityCollider = entity->GetComponent<ColliderComponent>())
+        {
+            for (Entity* otherEntity : entities)
+            {
+                // Skip collision check with self
+                if (entity == otherEntity) continue;
+
+                if (const ColliderComponent* otherCollider = otherEntity->GetComponent<ColliderComponent>())
+                {
+                    // Get the position of the other entity
+                    const vec2 otherPosition = otherEntity->GetComponent<Transform2DComponent>()->position;
+
+                    for (auto& bound : entityCollider->bounds)
+                    {
+                        Bounds offsetBounds = bound;
+                        offsetBounds.min += newPosition;
+                        offsetBounds.max += newPosition;
+
+                        for (auto& otherBound : otherCollider->bounds)
+                        {
+                            // Offset the other entity's bounds by its position
+                            Bounds offsetOtherBound = otherBound;
+                            offsetOtherBound.min += otherPosition;
+                            offsetOtherBound.max += otherPosition;
+
+                            if (Bounds::Collides(offsetBounds, offsetOtherBound))
+                            {
+                                // Collision detected, revert the position and stop the velocity
+                                if (isXAxis)
+                                {
+                                    newPosition.x = oldPosition.x;
+                                }
+                                else  // Y axis
+                                {
+                                    newPosition.y = oldPosition.y;
+                                    velocity = 0.0f;
+                                    Player* player = dynamic_cast<Player*>(entity);
+                                    if (player)
+                                    {
+                                        player->jumping = false;  // Set jumping to false when a collision with the ground is detected
+                                    }
+                                }
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
     void Game::Tick(float deltaTime)
     {
         //convert dT to seconds
@@ -32,7 +91,6 @@ namespace Tmpl8
         {
             PhysicsComponent* physics = entity->GetComponent<PhysicsComponent>();
             Transform2DComponent* transform = entity->GetComponent<Transform2DComponent>();
-            ColliderComponent* collider = entity->GetComponent<ColliderComponent>();
 
             if (physics && transform)
             {
@@ -59,52 +117,14 @@ namespace Tmpl8
                 physics->Update(deltaTime);
                 const vec2 oldPosition = transform->position;
 
-                // Add Gravity 
+                // Add Gravity ,Check for Y collision with all entities
                 transform->position.y += physics->velocity.y * deltaTime;
-                // Check for collision with the level
-                ColliderComponent* levelCollider = level->GetComponent<ColliderComponent>();
-                if (collider && levelCollider)
-                {
-                    for (auto& bound : collider->bounds)
-                    {
-                        Bounds offsetBounds = bound;
-                        offsetBounds.min += transform->position;
-                        offsetBounds.max += transform->position;
+                HandleCollision(entity, oldPosition, transform->position, physics->velocity.y, false);
 
-                        for (auto& levelBound : levelCollider->bounds)
-                        {
-                            if (Bounds::Collides(offsetBounds, levelBound))
-                            {
-                                // Collision detected, revert the y position and stop the y velocity
-                                transform->position.y = oldPosition.y;
-                                physics->velocity.y = 0.0f;
-                                player->jumping = false;  // Set jumping to false when a collision with the ground is detected
-                                break;
-                            }
-                        }
-                    }
-                }
-                // Add horizontal movement
+                // Add horizontal movement ,Check for X collision with all entities
                 transform->position.x += physics->velocity.x * deltaTime;
-                // Check for collision with the level
-                if (collider && levelCollider)
-                {
-                    for (auto& bound : collider->bounds)
-                    {
-                        Bounds offsetBounds = bound;
-                        offsetBounds.min += transform->position;
-                        offsetBounds.max += transform->position;
-                        for (auto& levelBound : levelCollider->bounds)
-                        {
-                            if (Bounds::Collides(offsetBounds, levelBound))
-                            {
-                                // Collision detected, revert the x position
-                                transform->position.x = oldPosition.x;
-                                break;
-                            }
-                        }
-                    }
-                }
+                HandleCollision(entity, oldPosition, transform->position, physics->velocity.x, true);
+
             }
             renderSystem.Update(*entity, *screen);
         }
@@ -148,7 +168,7 @@ namespace Tmpl8
 		case SDL_SCANCODE_SPACE:  // Jump
 			if (!player->jumping)  // Only allow a jump if the player is not already jumping
 			{
-				physics->velocity.y = -300.0f;  // Apply an upward force
+				physics->velocity.y = -380.0f;  // Apply an upward force
 				player->jumping = true;  // Set jumping to true
 			}
 		default:

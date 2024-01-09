@@ -20,7 +20,8 @@ public:
                                             Bounds(Tmpl8::vec2(1, 61), Tmpl8::vec2(63, 448)),
                                             Bounds(Tmpl8::vec2(577, 63), Tmpl8::vec2(639, 446)),
                                             Bounds(Tmpl8::vec2(320, 321), Tmpl8::vec2(575, 455)),
-                                            Bounds(Tmpl8::vec2(321, 258), Tmpl8::vec2(447, 322)),/* add more Bounds here */ };
+                                            Bounds(Tmpl8::vec2(321, 258), Tmpl8::vec2(447, 322)),
+                                             };
         AddComponent(new ColliderComponent(levelBounds));
     }
 

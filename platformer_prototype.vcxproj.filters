@@ -58,6 +58,12 @@
     <ClInclude Include="Level.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="Platform.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Bomb.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="_readme.txt" />
