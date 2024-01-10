@@ -7,7 +7,7 @@
 class Entity
 {
 public:
-    virtual ~Entity() {}
+    virtual ~Entity() = default;
     template <typename T>
     void AddComponent(T* component)
     {

@@ -1,5 +1,7 @@
 #pragma once
 
+//Timer class implementation by Jeremiah Van Oosten (@JPVanOosten)
+
 #include <chrono>
 
 class Timer

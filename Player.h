@@ -1,4 +1,5 @@
 #pragma once
+#include "Bomb.h"
 #include "Bounds.h"
 #include "ColliderComponent.h"
 #include "Entity.h"
@@ -55,6 +56,7 @@ public:
         AddComponent(new ColliderComponent(playerBounds));
 
         AddComponent(new PhysicsComponent());
+        AddComponent(new TimerComponent());
     }
 };
 

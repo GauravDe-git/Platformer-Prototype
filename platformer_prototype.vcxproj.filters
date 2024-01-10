@@ -64,6 +64,9 @@
     <ClInclude Include="Bomb.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="_readme.txt" />

@@ -5,6 +5,7 @@
 
 #include <SDL_scancode.h>
 
+#include "Enemy.h"
 #include "Platform.h"
 
 namespace Tmpl8 {
@@ -31,6 +32,7 @@ private:
 
 	Level* level;
 	Platform* platform;
+	Enemy* enemy;
 };
 
 }; // namespace Tmpl8

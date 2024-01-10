@@ -25,6 +25,18 @@ public:
         return 0;
     }
 
+    bool IsFinished() const
+    {
+        if (sprite)
+        {
+            float duration = sprite->Frames() / fps;
+            return totalTime >= duration;
+        }
+
+        return false;
+    }
+
+
 private:
     Tmpl8::Sprite* sprite = nullptr;
     float fps = 30.0f;
