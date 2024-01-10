@@ -48,3 +48,5 @@ Refactoring the code to encapsulate game-specific logic into separate systems ca
 - BombSystem: This system could handle the logic specific to bombs, such as checking if a bomb is active, handling explosions, and deleting bombs. The bomb-specific logic currently in the Tick function could be moved here.
 - EnemySystem: This system could handle the logic specific to enemies, such as changing the enemy’s sprite based on its state. The enemy-specific logic currently in the Tick function could be moved here.
 
+## Credits:
+Pixel Bomb asset pack by Pixel Frog.
